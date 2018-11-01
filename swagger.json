@@ -1,0 +1,785 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The DM Personnel (Definition) API uses defined messages to query (get) create (post), update (put) or delete individual versions of personnel  objects which are Personnel Class, Person, and Test Specification. The Post/object messages are used to create a definition of a specific object type. The Put/object messages are used to update a definition of a specific object type. Delete/object messages used to delete a definition of a specific object type. The DM Personnel (Definitions) API provides Developers the Get/object messages to query for definition versions of a specific object type.  The DM function services production and support operations by managing all Level 3 and some Level 2 information definition. The primary work definition object is the work master which is the requirements for a work task in a scheduled job order.  The work master contains the required resourse specifications (bill of materials and required resources), the workflow specification for execution, and parameter specifications. The work master includes    1) Material specification object with material use for production operations as material produced, consumable, material consumed, by-product produced, co-product produced, and yield produced. The material specification is typically represents the manufacturing bill of materials (BoM).    2) Required equipment specifications and personnel specifications. The resource specifications define the applied resource definition or class objects.    3) Workflow specification object defines a workflow as a collection of nodes and connections with the rules for relationship and dependency. A node may reference a chilld work master for more detail. The workflow specification can reference a master recipe (ANSI/ISA-88.00.01 and IEC 61512-1 definitions), standard operating procedure (SOP), standard operating conditions (SOC), routing, or assembly steps based on the production strategy used.      4) parameter specification object defines the job order specific parameters and rule sets which instructs how L3 manufacturing operations and L2 process sequences how to execute production or supporting operations.     Each work master (ISA-95 Part 4) defines its scope as an equipment heirachy level as either general, site, work cell, unit or lower.",
+    "version" : "1.0.1",
+    "title" : "Definition Management Personnel API",
+    "contact" : {
+      "email" : "mason.yarrick@bhp.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "admins",
+    "description" : "Secured Admin-only calls"
+  }, {
+    "name" : "developers",
+    "description" : "Operations available to regular developers"
+  } ],
+  "paths" : {
+    "/personnelClass/{id}" : {
+      "get" : {
+        "tags" : [ "developers" ],
+        "summary" : "gets personnel classes",
+        "operationId" : "getPersonnelClass",
+        "description" : "Gets personnel classes with specific IDs\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Personnel Class Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "query",
+          "name" : "version",
+          "description" : "The version of the spec to get the personnel class from",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/personnelClass"
+            }
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "admins" ],
+        "summary" : "deletes personnel classes",
+        "operationId" : "deletePersonnelClass",
+        "description" : "Deletes personnel classes with specific Ids\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Personnel Class Id",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Deleted"
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "admins" ],
+        "summary" : "updates personnel classes",
+        "operationId" : "updatePersonnelClass",
+        "description" : "Updates personnel classes with specific Ids\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Personnel Class Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "personnelClass",
+          "description" : "The personnel class to create.",
+          "schema" : {
+            "$ref" : "#/definitions/personnelClass"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Updated"
+          },
+          "400" : {
+            "description" : "Bad input parameter"
+          }
+        }
+      }
+    },
+    "/personnelClass" : {
+      "get" : {
+        "tags" : [ "developers" ],
+        "summary" : "searches for personnel classes",
+        "operationId" : "findPersonnelClasses",
+        "description" : "Searches for personnel classes with specific properties\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "id",
+          "description" : "the unique identifier of the personnel class to retrieve",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "query",
+          "name" : "hierarchyScopeId",
+          "description" : "The hierarchy scope to retrieve personnel classes by",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "description" : "the number of results to return",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "in" : "query",
+          "name" : "version",
+          "description" : "the version of the spec to retrieve the personnel class for",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/personnelClass"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad input parameter"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "admins" ],
+        "summary" : "creates personnel classes",
+        "operationId" : "createPersonnelClass",
+        "description" : "Create new items of personnel classes in the system\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "personnelClass",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/personnelClass"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad input parameter"
+          }
+        }
+      }
+    },
+    "/person/{id}" : {
+      "get" : {
+        "tags" : [ "developers" ],
+        "summary" : "gets persons",
+        "operationId" : "getPerson",
+        "description" : "Gets persons with specific Ids\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Person Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "query",
+          "name" : "version",
+          "description" : "The version of the spec to get the persons for",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/person"
+            }
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "admins" ],
+        "summary" : "deletes persons",
+        "operationId" : "deletePersons",
+        "description" : "Deletes persons with specific Ids\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Person Id",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Deleted"
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "admins" ],
+        "summary" : "updates persons",
+        "operationId" : "updatePerson",
+        "description" : "Updates persons with specific Ids\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "person Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "person",
+          "description" : "The person to update.",
+          "schema" : {
+            "$ref" : "#/definitions/person"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Updated"
+          },
+          "400" : {
+            "description" : "Bad input parameter"
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        }
+      }
+    },
+    "/person" : {
+      "get" : {
+        "tags" : [ "developers" ],
+        "summary" : "searches for persons",
+        "operationId" : "findPersons",
+        "description" : "Searches for persons with specific properties\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "id",
+          "description" : "the unique identifier of the person to retrieve",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "description" : "the number of results to return",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "in" : "query",
+          "name" : "version",
+          "description" : "the version of the spec to retrieve the persons for",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/person"
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "admins" ],
+        "summary" : "creates persons",
+        "operationId" : "createPerson",
+        "description" : "Create new items of persons in the system\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "person",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/person"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad input parameter"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "personnelClass" : {
+      "type" : "object",
+      "description" : "A representation of a grouping of persons with similar characteristics for a definite purpose such as manufacturing work (master) operations definition, scheduling, capability and performance shall be presented as a personnel class. Any person may be a member of zero or more personnel classes. A personnel class may be defined as a specialization of zero or more personnel class.  A personnel class may be made up of zero or more personnel class(s). A personnel class may be tested by the evaluation of the test specification criteria in the test specification that references the evaluated property and may be recorded in an evaluated criterion result attribute in the test result.",
+      "required" : [ "id", "version", "hierarchyScopeId", "effectiveFrom", "effectiveTo" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "A unique identification of a specific personnel material class, within the scope of the information exchanged (production capability, production schedule, production performance, …) The ID shall be used in other parts of the model when the personnel class needs to be identified, such as the production capability. These are not necessarily job titles, but identify classes that are referenced in other parts of the model.",
+          "example" : "Welder Class 2"
+        },
+        "version" : {
+          "type" : "string",
+          "description" : "The version number of this personnel class.",
+          "example" : 1
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about the personnel class.",
+          "example" : "High Grade Ore"
+        },
+        "hierarchyScopeId" : {
+          "type" : "string",
+          "description" : "Identifies where the exchanged information fits within the role based equipment hierarchy. Optionally, hierarchy scope defines the scope of the personnel class definition, such as the site or area where it is defined.",
+          "example" : "Eastern Ridge (site)"
+        },
+        "personnelClassParentIds" : {
+          "type" : "array",
+          "description" : "The personnel class properties of the identified parent personnel class(s) are included properties of the personnel class.",
+          "example" : "IN-SITU",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "testSpecifications" : {
+          "type" : "array",
+          "description" : "The test specification(s) used to evaluate the personnel class.",
+          "example" : "TS-EX-1.0",
+          "items" : {
+            "$ref" : "#/definitions/testSpecification"
+          }
+        },
+        "effectiveFrom" : {
+          "type" : "string",
+          "description" : "Custom non-ISA-95 attribute for BHP requirements. The timestamp that this personnel class is effective from.",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "effectiveTo" : {
+          "type" : "string",
+          "description" : "Custom non-ISA-95 attribute for BHP requirements. The timestamp that this personnel class is effective to.",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "personnelClassProperties" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/personnelClassProperty"
+          }
+        }
+      }
+    },
+    "personnelClassProperty" : {
+      "type" : "object",
+      "description" : "Properties of a personnel class shall be presented as personnel class properties. Each personnel class shall have zero or more recognized properties. For example, Personnel class properties for the personnel class operators can be a class 1 certified, class 2 certified, night shift, and exposure hours. Operations or work requests may specify required personnel class property requirements for an operations segment or work master. A personnel class property may be tested to the evaluated property in a test specification where the measured results may be recorded in a property measurement attribute in a test result. The measured results may also be evaluated to the test specification criteria in the test specification that references the evaluated property where they may be recorded in an evaluated criterion result attribute in the test result. Personnel class property(s) may contain nested personnel class property(s).",
+      "required" : [ "id", "value", "valueUnitOfMeasure" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identification of a specific personnel class property.",
+          "example" : "Fe"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about the personnel class property.",
+          "example" : "Iron"
+        },
+        "propertyType" : {
+          "type" : "string",
+          "description" : "Defines the type of the property. Defined types are 1) class type, the property value is defined for the class and there is no value associated with an instance; 2)  instance type, the property value of the class is undefined; and 3) default type, the property value is defined for the class as the default instance value, but individual instances of the class may redefine specific values.",
+          "example" : "Instance type"
+        },
+        "personnelClassPropertyChildIds" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "value" : {
+          "type" : "string",
+          "description" : "The value, set of values, or range of the personnel class property.",
+          "example" : "62"
+        },
+        "valueUnitOfMeasure" : {
+          "type" : "string",
+          "description" : "The unit of measure of the associated property value, if applicable.",
+          "example" : "percentage"
+        }
+      }
+    },
+    "person" : {
+      "type" : "object",
+      "description" : "A representation of a specifically identified individual shall be presented as a person. A person may be a member of zero or more personnel classes. A person may be tested by the evaluation of the test specification criteria in the test specification that references the evaluated property and may be recorded in an evaluated criterion result attribute in the test result. Person shall include a unique identification of the individual.",
+      "required" : [ "id", "version", "hierarchyScopeId", "effectiveFrom", "effectiveTo" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "A unique identification of a specific person, within the scope of the information exchanged (operations capability, operations schedule, operations performance, …). Required attribute. The ID is used in other parts of the model when the person needs to be identified, such as the operations capability for this person, or a operations response identifying the person.",
+          "example" : "James Smith"
+        },
+        "version" : {
+          "type" : "string",
+          "description" : "Custom non-ISA-95 attribute for BHP requirements. The version number of this instance of the person.",
+          "example" : "Employee No 334.1"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about the person.",
+          "example" : "High Grade Ore"
+        },
+        "hierarchyScopeId" : {
+          "type" : "string",
+          "description" : "Identifies where the exchanged information fits within the role based equipment hierarchy. Optionally, hierarchy scope defines the scope of the personnel class definition, such as the site or area where it is defined.",
+          "example" : "Eastern Ridge (site)"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "The proper name of this instance of the person. This is meant as an additional identification of the resource, but only as information and not as a unique value",
+          "example" : "James Smith"
+        },
+        "personnelClassIds" : {
+          "type" : "array",
+          "description" : "Personnel classes supported by this person. This person supports the personnel class property(s) associated with the personnel class.",
+          "example" : "In-Situ",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "testSpecifications" : {
+          "type" : "array",
+          "description" : "The test specification(s) used to evaluate the personnel class.",
+          "example" : "TS-EX-1.0",
+          "items" : {
+            "$ref" : "#/definitions/testSpecification"
+          }
+        },
+        "effectiveFrom" : {
+          "type" : "string",
+          "description" : "Custom non-ISA-95 attribute for BHP requirements. The timestamp that this personnel class is effective from.",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "effectiveTo" : {
+          "type" : "string",
+          "description" : "Custom non-ISA-95 attribute for BHP requirements. The timestamp that this personnel class is effective to.",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "spatialDefinition" : {
+          "type" : "array",
+          "description" : "Spatially defines the person as a 0-dimensional point, 1-dimensional line, or 2-dimensional shape or 3-dimensional solid",
+          "items" : {
+            "$ref" : "#/definitions/spatialDefinition"
+          }
+        },
+        "personProperties" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/personProperty"
+          }
+        }
+      }
+    },
+    "personProperty" : {
+      "type" : "object",
+      "description" : "Properties of a person shall be presented as person properties. Each person shall have zero or more person properties. These specify the current property values of the person for the associated personnel class property. For example, a person property can be night shift and its value would be available, and a person property can be exposure hours available and its value would be 4. Person properties may include the current availability of a person and other current information, such as location and assigned activity, and the unit of measure of the current information. A person property may be tested to the evaluated property in a test specification where the measured results may be recorded in a property measurement attribute in a test result. The measured results may also be evaluated to the test specification criteria in the test specification that references the evaluated property where they may be recorded in an evaluated criterion result attribute in the test result. Person properties may contain nested person properties.",
+      "required" : [ "id", "value", "valueUnitOfMeasure" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identification of a specific person class property.",
+          "example" : "DigRate"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about the person class property.",
+          "example" : "Dig Rate"
+        },
+        "personPropertyChildIds" : {
+          "type" : "array",
+          "description" : "This nested person property(s) is part of the person property as the whole.",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "personnelClassPropertyId" : {
+          "type" : "string",
+          "description" : "If the person supports the parent personnel class, the personnel class property(s) is applied in this person property(s). This person property maps to the corresponding personnel class property."
+        },
+        "value" : {
+          "type" : "string",
+          "description" : "The value, set of values, or range of the person class property.",
+          "example" : 3600
+        },
+        "valueUnitOfMeasure" : {
+          "type" : "string",
+          "description" : "The unit of measure of the associated person class property value, if applicable.",
+          "example" : "Tonnes/Hour"
+        }
+      }
+    },
+    "testSpecification" : {
+      "description" : "The test specification details the test specification criteria and the tested evaluated property(s) required for a testable object (personnel class, person, equipment class, equipment, material class, material definition, material lot, material sublot) to match the quality or performance requirements of an operations requirement from a schedule, the business or particular customers. The test specification communicates the test tolerances and related target values for a specific testable object referencing a set of operations test requirements for context of the test. A test specification may contain other test specifications to form a hierarchy of test specifications. When a hierarchy of test specifications are used, the result of the parent object in the hierarchy shall be the worst-case result of all the respective child object results.",
+      "required" : [ "id", "version" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "Required attribute. Uniquely identifies a test specification for certifying one or more test specification criteria for one or more evaluated property.",
+          "example" : "TS-EXT"
+        },
+        "version" : {
+          "type" : "string",
+          "description" : "An identification of the version of the test specification.",
+          "example" : "TS-EXT 1.1"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Contains additional information and descriptions of the test specification.",
+          "example" : "Test specification for Extraction"
+        },
+        "hierarchyScopeId" : {
+          "type" : "string",
+          "description" : "Identifies where the exchanged information fits within the role based equipment hierarchy. Optionally, hierarchy scope defines the scope of the object, such as the site or area.",
+          "example" : "Eastern Ridge (site)"
+        },
+        "testSpecificationChildIds" : {
+          "type" : "array",
+          "description" : "The child test specifications of this test specification..",
+          "example" : "EX-TRAVEL 1.0",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "operationsTestRequirementIds" : {
+          "type" : "array",
+          "description" : "The operations test requirement ID(s) evaluated by this test specification.",
+          "example" : "MD-grade 1.1",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "testableObjectIds" : {
+          "type" : "array",
+          "description" : "The ID of the testable object tested by this test specification",
+          "example" : "MD-grade 1.1",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "effectiveStartDate" : {
+          "type" : "string",
+          "description" : "The effective start date and time for use of the test specification or set of test specifications",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "effectiveEndDate" : {
+          "type" : "string",
+          "description" : "The effective end date and time for use of the test specification or set of test specifications",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "publishedDate" : {
+          "type" : "string",
+          "description" : "The date and time test specification was published or generated",
+          "example" : "ISO 8601: yyyy-mm-ddThh:mm:ss for local time as 2002-09-22T09:15:23"
+        },
+        "testSampleSize" : {
+          "type" : "string",
+          "description" : "Sample size required to perform the test.",
+          "example" : "200 Kilo Tonnes"
+        },
+        "physicalSample" : {
+          "type" : "string",
+          "description" : "Defines whether physical sampling is required to perform the test. Defined values are yes for physical samples are required and no for physical samples are not required.",
+          "example" : "Y"
+        },
+        "recurranceQuantity" : {
+          "type" : "string",
+          "description" : "The amount of operations activity required between samples.",
+          "example" : "each load"
+        },
+        "recurrenceTimeInterval" : {
+          "type" : "string",
+          "description" : "The duration of operational activity required between samples",
+          "example" : "each 60 min"
+        },
+        "testSpecificationCriteria" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/testSpecificationCriteria"
+          }
+        },
+        "evaluatedProperties" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/evaluatedProperty"
+          }
+        },
+        "tesstSpecificationProperties" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/testSpecificationProperty"
+          }
+        }
+      }
+    },
+    "testSpecificationProperty" : {
+      "type" : "object",
+      "description" : "The test specification property object defines properties of the test specification. These properties are not the characteristics to be tested.",
+      "required" : [ "id", "value", "valueUnitOfMeasure" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "A unique identification of a test specification property.",
+          "example" : "EX-WM-TRAVEL-SPEED"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about the test specification property.",
+          "example" : "Speed"
+        },
+        "testSpecificationPropertyChildIds" : {
+          "type" : "array",
+          "description" : "Unique identifications of children of the test specification property as test specification property IDs which make up part",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "value" : {
+          "type" : "number",
+          "description" : "The default value, set of values, or range of the test specification property.",
+          "example" : 60
+        },
+        "valueUnitOfMeasure" : {
+          "type" : "string",
+          "description" : "The unit of measure of the associated test specification property value, if applicable.",
+          "example" : "Kilometres/Hour"
+        }
+      }
+    },
+    "testSpecificationCriteria" : {
+      "type" : "object",
+      "description" : "The test specification criteria object defines the set of criterion to evaluate and the test result to be reported when a testable object satisfies those criteria. This test specification criteria used to evaluate the evaluated property of a testable object property.",
+      "required" : [ "id", "sequence", "expression", "result", "evaluatedPropertyIds" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "Uniquely identifies the test specification criteria definition.",
+          "example" : "Fe_warning"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Contains additional information and descriptions of the test specification criteria.",
+          "example" : "Fe warning ranges"
+        },
+        "sequence" : {
+          "type" : "string",
+          "description" : "Specifies the sequence of evaluation of test specification criteria. The sequence shall be executed lowest first. Duplicate sequence values shall be executed in parallel with worst case result reported if both criterion are evaluated as true.",
+          "example" : "Node 1.1A"
+        },
+        "expression" : {
+          "type" : "string",
+          "description" : "An expression of the test specification criteria to be evaluated. If the expression is empty, then the test specification criteria represents the else criterion.",
+          "example" : "If (criterion 1) then ‘pass’ else if (criterion 2) then ‘warn’ else ‘fail’."
+        },
+        "result" : {
+          "type" : "string",
+          "description" : "The value to be given to the result of the test if the test specification criteria expression is evaluated as true",
+          "example" : "pass"
+        },
+        "evaluatedPropertyIds" : {
+          "type" : "array",
+          "description" : "The test specification criteria used to evaluate this evaluated property(s) of a testable object property.",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "evaluatedProperty" : {
+      "type" : "object",
+      "description" : "The evaluated property object identifies the set of testable object / testable object property pairs to be measured and the applicable test method to obtain a property measurement. This test specification criteria used to evaluate the evaluated property of a testable object property.",
+      "required" : [ "id", "testableObjectPropertyIds", "testSpecificationCriteriaIds" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "A unique identification of an evaluated property.",
+          "example" : "EX-WM-TRAVEL-SPEED"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Additional information about an evaluated property.",
+          "example" : "Speed"
+        },
+        "testableObjectPropertyIds" : {
+          "type" : "array",
+          "description" : "The testable object property ID which is to be measured by this test specification.",
+          "example" : "MS-Grade 1.1",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "workMasterIds" : {
+          "type" : "array",
+          "description" : "The work master ID or work directive ID which is applied test method to obtain the measurement of this evaluated property for test specification of the testable object property ID.",
+          "example" : "WM-EXE 1.1",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "testSpecificationCriteriaIds" : {
+          "type" : "array",
+          "description" : "This test specification criteria used to evaluate the evaluated property of a testable object property.",
+          "example" : "TSC-1.1",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "spatialDefinition" : {
+      "type" : "object",
+      "description" : "The spatial definition provides a means of communicating 0-dimensional point, 1-dimensional line, or 2-dimensional shape or 3-dimensional solid geospatial location data for planning/scheduling, actuals, resources, and analytics. Spatial definition identifies a value and the pre-defined coordinate reference system using following attributes a)  value; b)  format; c)  spatial reference identifier (SRID); and d)  SRID authority. A fully qualified spatial definition exchange has all 4 attributes as a minimum.  In some information exchanges, sending and receiving applications may have a specified agreement on format, SRID, and SRID authority. Spatial definition is distinct from, and separate to storage location and physical location. Storage location attribute is defined for material lots and material sublots as a non-spatial definition of location. The physical location attribute logically identifies a “place” which is actual physical location of the physical asset.",
+      "properties" : {
+        "value" : {
+          "type" : "string",
+          "description" : "A string serialization EXAMPLE 1 UN/CEFACT CCTS: TextType) of the geospatial information in the format indicated in the format attribute.",
+          "example" : "POLYGON ( (-2594646.99104 11815676.18456, -2594645.14848 11815683.08856, -2594646.99104 11815676.18456 ) )"
+        },
+        "format" : {
+          "type" : "string",
+          "description" : "An enumerator that determines the format of the value attribute.",
+          "example" : "WKT"
+        },
+        "srid" : {
+          "type" : "string",
+          "description" : "SRID is the Spatial Reference Identifier which identifies the coordinate reference system to identify a pre-defined coordinate reference system (pre-configured into communication systems). An identifier from the SRID Authority.",
+          "example" : "6283 (Geocentric Datum of Australia 1994)"
+        },
+        "sridAuthority" : {
+          "type" : "string",
+          "description" : "The SRID authority identifies the authority that defines the coordinate reference system identified by the SRID. EXAMPLE 2 EPSG (see http://www.epsg-registry.org/). An organization may choose to define its own SRIDs. EXAMPLE 3 Reference its own authority.",
+          "example" : "EPSG"
+        }
+      }
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "schemes" : [ "https" ],
+  "basePath" : "/BHP_TECH_SI/DefinitionsManagement_Material/1.0.0"
+}
